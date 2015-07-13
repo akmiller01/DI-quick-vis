@@ -1,4 +1,4 @@
 venv
 staticfiles
-qv/datamedia/*
+qv/data/*
 *.pyc
