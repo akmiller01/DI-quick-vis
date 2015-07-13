@@ -20,6 +20,7 @@
 
 {% block content %}
 <h1>{{dataset.name}}</h1>
+<p>{{dataset.data|length|add:"-1"}} rows {% if dataset.data|length|add:"-1" > 1000 %}, showing first 1000{% endif %}</p>
 <div id="dataHolder" class="ui-widget-content resizable"></div>
 <script>
 $(".resizable")
@@ -39,11 +40,12 @@ $(".resizable")
                             width:'100%',
                             height:'100%'});
     var data = {{dataset.data|safe}}
-    var dataLen = data.length;
+    var dataLen = data.length>1001?1001:data.length;
     var html = "<table>"
     var row = data[0],
         rowLen = row.length;
         html += "<tr>"
+        html += "<th>row</th>"
         for (var j = 0; j < rowLen; j++) {
             html += "<th>"
             html += row[j]
@@ -54,6 +56,7 @@ $(".resizable")
         var row = data[i],
         rowLen = row.length;
         html += "<tr>"
+        html += "<td>"+i+"</td>"
         for (var j = 0; j < rowLen; j++) {
             html += "<td>"
             html += row[j]
