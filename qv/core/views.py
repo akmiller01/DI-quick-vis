@@ -11,7 +11,8 @@ def upload_file(request):
             instance = Dataset(file_field=request.FILES['file'],name=request.POST['dataset_name'])
             instance.save()
             #Success
-    form = UploadFileForm()
+    else:
+        form = UploadFileForm()
     datasets = Dataset.objects.all()
     for dataset in datasets:
         dataset.data = [row for row in csv.reader(dataset.file_field.read().splitlines())][0]
