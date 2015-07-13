@@ -32,15 +32,17 @@
                 <tr>
                     <th>Dataset</th>
                     <th>Created</th>
+                    <th>Headers</th>
                 </tr>
         {% endif %}
         <tr>
-            <td>{{dataset.name}}</td>
+            <td><a href="{{dataset.get_absolute_url}}">{{dataset.name}}</a></td>
             <td>
                 <time datetime="{{dataset.created|date:"c"}}">
                     {{dataset.created|date:"Y/m/d @ f a"}}
                 </time>
             </td>
+            <td>{{dataset.data}}</td>
         </tr>
         {%if forloop.last%}
             </table>

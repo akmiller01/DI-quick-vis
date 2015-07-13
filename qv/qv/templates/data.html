@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}{{dataset.name}}{% endblock %}
+
+{% block head %}
+{% endblock%}
+
+{% block content %}
+<h1>{{dataset.name}}</h1>
+<script>
+    var data = {{dataset.data|safe}}
+    var dataLen = data.length;
+    var html = "<table>"
+    for (var i = 0; i < dataLen; i++) {
+        var row = data[i],
+        rowLen = row.length;
+        html += "<tr>"
+        for (var j = 0; j < rowLen; j++) {
+            html += "<td>"
+            html += row[j]
+            html += "</td>"
+        }
+        html += "</tr>"
+    }
+    html += "</table>"
+    $('body').append(html)
+</script>
+{% endblock %}
