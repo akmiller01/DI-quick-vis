@@ -3,15 +3,54 @@
 {% block title %}{{dataset.name}}{% endblock %}
 
 {% block head %}
+<style>
+    #dataHolder{
+        float:left;
+        height:500px;
+        overflow-y:scroll;
+        }
+    #dataHolder table{
+        width:100%;
+    }
+    #dataHolder table tr:nth-child(even){
+        background-color: #CCC;
+    }
+</style>
 {% endblock%}
 
 {% block content %}
 <h1>{{dataset.name}}</h1>
+<div id="dataHolder" class="ui-widget-content resizable"></div>
 <script>
+$(".resizable")
+      .wrap('<div/>')
+        .css({'overflow':'hidden'})
+          .parent()
+            .css({'display':'inline-block',
+                  'overflow':'hidden',
+                  'height':function(){return $('.resizable',this).height();},
+                  'width':  'auto',
+                  'paddingBottom':'12px',
+                  'paddingRight':'12px'
+                  
+                 }).resizable()
+                    .find('.resizable')
+                      .css({overflow:'auto',
+                            width:'100%',
+                            height:'100%'});
     var data = {{dataset.data|safe}}
     var dataLen = data.length;
     var html = "<table>"
-    for (var i = 0; i < dataLen; i++) {
+    var row = data[0],
+        rowLen = row.length;
+        html += "<tr>"
+        for (var j = 0; j < rowLen; j++) {
+            html += "<th>"
+            html += row[j]
+            html += "</th>"
+        }
+        html += "</tr>"
+    for (var i = 1; i < dataLen; i++) {
         var row = data[i],
         rowLen = row.length;
         html += "<tr>"
@@ -23,6 +62,6 @@
         html += "</tr>"
     }
     html += "</table>"
-    $('body').append(html)
+    $('#dataHolder').append(html)
 </script>
 {% endblock %}
