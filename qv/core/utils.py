@@ -1,4 +1,5 @@
 from django.conf import settings
+import ntpath
 
 def handle_uploaded_file(f):
     with open('some/file/name.txt', 'wb+') as destination:

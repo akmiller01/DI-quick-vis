@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'core',
     'redactor',
     'compressor',
+    'qv'
 )
 
 MIDDLEWARE_CLASSES = (

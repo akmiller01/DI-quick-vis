@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload{% endblock %}
+
+{% block head %}
+    <style>
+        .fieldWrapper {padding:10px;}
+        .submit {padding:10px;}
+        .helpText{color:#777;}
+    </style>
+{% endblock%}
+
+{% block content %}
+    <form enctype="multipart/form-data" action="{% url 'upload_file' %}" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+            {% if field.help_text %}
+                <i class="helpText">({{ field.help_text }})</i>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="submit">
+            <input type="submit" value="Upload" />
+        </div>
+    </form>
+    {% for dataset in datasets %}
+        {% if forloop.first %}
+            <table>
+                <tr>
+                    <th>Dataset</th>
+                    <th>Created</th>
+                </tr>
+        {% endif %}
+        <tr>
+            <td>{{dataset.name}}</td>
+            <td>
+                <time datetime="{{dataset.created|date:"c"}}">
+                    {{dataset.created|date:"Y/m/d @ f a"}}
+                </time>
+            </td>
+        </tr>
+        {%if forloop.last%}
+            </table>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
