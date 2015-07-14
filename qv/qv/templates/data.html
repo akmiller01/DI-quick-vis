@@ -7,13 +7,34 @@
     #dataHolder{
         float:left;
         height:500px;
-        overflow-y:scroll;
+        overflow:scroll;
+        margin-left:10px;
+        margin-right:10px;
         }
+    #chartHolder{
+        float:left;
+        overflow:scroll;
+        margin-left:10px;
+        margin-right:10px;
+        min-width:300px;
+    }
     #dataHolder table{
         width:100%;
     }
     #dataHolder table tr:nth-child(even){
         background-color: #CCC;
+    }
+    .ui-resizable{float:left;}
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+    }
+    
+    .axis text {
+        font-family: sans-serif;
+        font-size: 11px;
     }
 </style>
 {% endblock%}
@@ -22,7 +43,9 @@
 <h1>{{dataset.name}}</h1>
 <p>{{dataset.data|length|add:"-1"}} rows {% if dataset.data|length|add:"-1" > 1000 %}, showing first 1000{% endif %}</p>
 <div id="dataHolder" class="ui-widget-content resizable"></div>
+<div id="chartHolder" class="ui-widget-content resizable"><svg viewBox="0 0 1120 440"></svg></div>
 <script>
+//Make table resizable
 $(".resizable")
       .wrap('<div/>')
         .css({'overflow':'hidden'})
@@ -32,23 +55,25 @@ $(".resizable")
                   'height':function(){return $('.resizable',this).height();},
                   'width':  'auto',
                   'paddingBottom':'12px',
-                  'paddingRight':'12px'
+                  'paddingRight':'22px'
                   
                  }).resizable()
                     .find('.resizable')
                       .css({overflow:'auto',
                             width:'100%',
                             height:'100%'});
+//Import data from Django
     var data = {{dataset.data|safe}};
+//Draw table
     var dataLen = data.length>1001?1001:data.length;
     var html = "<table>"
-    var row = data[0],
-        rowLen = row.length;
+    var header = data[0],
+        headerLen = header.length;
         html += "<tr>"
         html += "<th>row</th>"
-        for (var j = 0; j < rowLen; j++) {
+        for (var j = 0; j < headerLen; j++) {
             html += "<th>"
-            html += row[j]
+            html += header[j]
             html += "</th>"
         }
         html += "</tr>"
@@ -66,5 +91,114 @@ $(".resizable")
     }
     html += "</table>"
     $('#dataHolder').append(html)
+//Make chart
+//Array of arrays -> array of objects
+var dataLen = data.length,
+dataObj = [];
+for(var i = 1; i < dataLen; i ++){
+    var obj = {};
+    for(var j = 0; j < headerLen; j ++){
+        var head = header[j];
+        obj[head] = data[i][j];
+    };
+    dataObj.push(obj);
+};
+data = dataObj;
+var margin = {
+    top: 10,
+    right: 60,
+    bottom: 30,
+    left: 60
+};
+var svg = d3.select('#chartHolder svg');
+var g = svg.append('g')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+var yScale = d3.scale.linear();
+
+var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("left");
+    
+var yAxisContainer = g.append("g")
+    .attr("class", "axis");
+
+var barContainer = g.append('g')
+    .attr('class', 'barContainer');
+    
+//var availableWidth = (d3.select('#chartHolder').node().offsetWidth) - margin.left - margin.right;
+var availableWidth = 1000;
+var height = 400;
+var maxEntriesPerYear = d3.max(_.values(_.countBy(data, function(d) {
+    return d.year;
+})));
+
+var yMin = 0;
+var yMax = d3.max(data, function (d){
+    return parseFloat(d.value);
+})
+console.log(yMax)
+
+var timeExtent = d3.extent(data,function (d){
+    return d.year;
+})
+
+yearMin = timeExtent[0];
+yearMax = timeExtent[1];
+
+yScale.domain([yMin, yMax]);
+yScale.range([height, 0])
+yScale.nice();
+
+var padding = 2;
+var barWidth = availableWidth / maxEntriesPerYear - padding;
+
+var filteredData = _.filter(data, function (d){
+    return d.year == yearMin;
+});
+
+filteredData.sort(function (a,b){
+    return b.value - a.value;
+});
+yAxis
+    //.tickSize(-availableWidth)
+    .ticks(4)
+    //.tickFormat(function(d) {
+    //    return logFormat(d)
+    //})
+    .tickPadding(15);
+
+    yAxisContainer.transition().duration(500)
+    .call(yAxis);
+
+
+var bars =  barContainer.selectAll('.bar')
+    .data(filteredData, function (d){
+        return d.id;
+    })
+
+bars.enter()
+    .append('rect')
+
+bars.transition().duration(50)
+    .attr({
+        height: function (d) {
+            return height - yScale(d.value);
+        },
+        y: function (d) {
+            return yScale(d.value);
+        },
+
+        width: function (d) {
+            return barWidth;
+        },
+
+        x: function (d, i) {
+            return i * barWidth + i * padding;
+        }
+    })
+
+
+bars.exit().remove();
 </script>
 {% endblock %}
