@@ -39,7 +39,9 @@ INSTALLED_APPS = (
     'core',
     'redactor',
     'compressor',
-    'qv'
+    'qv',
+    'django_nvd3',
+    'djangobower'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -92,6 +94,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # other finders..
     'compressor.finders.CompressorFinder',
+    'djangobower.finders.BowerFinder',
 )
 
 MEDIA_URL = '/media/'
@@ -102,4 +105,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'data')
 REDACTOR_OPTIONS = {'lang': 'en','plugins':['fontcolor','fontfamily','fontsize','fullscreen','imagemanager','table','video']}
 REDACTOR_UPLOAD = 'media/'
 REDACTOR_UPLOAD_HANDLER = 'redactor.handlers.DateDirectoryUploader'
+
+#Bower
+
+BOWER_INSTALLED_APPS = (
+    'd3#3.3.13',
+    'nvd3#1.7.1',
+)
 

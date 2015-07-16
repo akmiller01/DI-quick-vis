@@ -1,7 +1,10 @@
 from django.conf import settings
-import ntpath
 
-def handle_uploaded_file(f):
-    with open('some/file/name.txt', 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
+def num(s):
+    try:
+        return int(s)
+    except:
+        try:
+            return float(s)
+        except:
+            return s

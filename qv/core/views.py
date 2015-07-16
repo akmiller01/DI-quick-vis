@@ -2,7 +2,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from core.forms import UploadFileForm
 from core.models import Dataset
+from core.utils import num
 import csv
+from operator import itemgetter
 
 def upload_file(request):
     if request.method == 'POST':
@@ -20,5 +22,33 @@ def upload_file(request):
 
 def data(request,slug):
     dataset = get_object_or_404(Dataset,slug=slug)
-    dataset.data = [row for row in csv.reader(dataset.file_field.read().splitlines())]
-    return render(request,'data.html',{'dataset':dataset})
+    dataArr = [row for row in csv.reader(dataset.file_field.read().splitlines())]
+    headers = dataArr[0]
+    dataDict = []
+    maxYear = 0
+    for row in dataArr[1:]:
+        rowDict = {}
+        for i in range(len(headers)):
+            header = headers[i]
+            cell = num(row[i])
+            if header=="year" and cell>maxYear:
+                maxYear=cell
+            rowDict[header] = cell
+        dataDict.append(rowDict)
+    dataDict.sort(key=itemgetter("value"),reverse=True)
+    dataset.data = dataDict
+    xdata = [row['id'] for row in dataDict if (row['year']==maxYear and row['value']!="")]
+    ydata = [row['value'] for row in dataDict if (row['year']==maxYear and row['value']!="")]
+    extra_serie1 = {"tooltip": {"y_start": "", "y_end": " cal"}}
+    chartdata = {
+        'x': xdata, 'name1': '', 'y1': ydata, 'extra1': extra_serie1,
+    }
+    charttype = "discreteBarChart"
+    chartcontainer = 'barchart_container'
+    data = {
+        'charttype': charttype,
+        'chartdata': chartdata,
+        'chartcontainer': chartcontainer,
+        'dataset':dataset
+    }
+    return render(request,'data.html',data)
