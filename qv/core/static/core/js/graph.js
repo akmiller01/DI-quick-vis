@@ -330,7 +330,7 @@ function bar(conf){
                 },
                 class: "bar",
                 
-                fill: function(d, i) {return shortColor(0)}
+                fill: function(d, i) {return shortColor(d[conf.xVar])}
             })
 
         bars.exit().remove();
