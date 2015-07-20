@@ -37,18 +37,7 @@ def data(request,slug):
         dataDict.append(rowDict)
     dataDict.sort(key=itemgetter("value"),reverse=True)
     dataset.data = dataDict
-    xdata = [row['id'] for row in dataDict if (row['year']==maxYear and row['value']!="")]
-    ydata = [row['value'] for row in dataDict if (row['year']==maxYear and row['value']!="")]
-    extra_serie1 = {"tooltip": {"y_start": "", "y_end": " cal"}}
-    chartdata = {
-        'x': xdata, 'name1': '', 'y1': ydata, 'extra1': extra_serie1
-    }
-    charttype = "discreteBarChart"
-    chartcontainer = 'barchart_container'
     data = {
-        'charttype': charttype,
-        'chartdata': chartdata,
-        'chartcontainer': chartcontainer,
         'dataset':dataset
     }
     return render(request,'data.html',data)

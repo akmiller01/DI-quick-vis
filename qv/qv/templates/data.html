@@ -37,17 +37,13 @@
         font-size: 11px;
     }
 </style>
-{% load nvd3_tags %}
-    {% include_chart_jscss %}
-    {% load_chart charttype chartdata chartcontainer %}
 {% endblock%}
 
 {% block content %}
 <h1>{{dataset.name}}</h1>
 <p>{{dataset.data|length|add:"-1"}} rows {% if dataset.data|length|add:"-1" > 1000 %}, showing first 1000{% endif %}</p>
-{% include_container chartcontainer 400 1000 %}
 <div id="dataHolder" class="ui-widget-content resizable"></div>
-{% load_chart charttype chartdata "barchart_container" %}
+<div id="chartHolder" class="ui-widget-content resizable"><svg viewBox="0 0 1120 440"></svg></div>
 <script>
 //Make table resizable
 $(".resizable")
@@ -95,101 +91,101 @@ $(".resizable")
     html += "</table>"
     $('#dataHolder').append(html)
 //Make chart
-//var margin = {
-//    top: 10,
-//    right: 60,
-//    bottom: 30,
-//    left: 60
-//};
-//var svg = d3.select('#chartHolder svg');
-//var g = svg.append('g')
-//    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-//
-//var yScale = d3.scale.linear();
-//
-//var yAxis = d3.svg.axis()
-//    .scale(yScale)
-//    .orient("left");
-//    
-//var yAxisContainer = g.append("g")
-//    .attr("class", "axis");
-//
-//var barContainer = g.append('g')
-//    .attr('class', 'barContainer');
-//    
-////var availableWidth = (d3.select('#chartHolder').node().offsetWidth) - margin.left - margin.right;
-//var availableWidth = 1000;
-//var height = 400;
-//var maxEntriesPerYear = d3.max(_.values(_.countBy(data, function(d) {
-//    return d.year;
-//})));
-//
-//var yMin = 0;
-//var yMax = d3.max(data, function (d){
-//    return parseFloat(d.value);
-//})
-//console.log(yMax)
-//
-//var timeExtent = d3.extent(data,function (d){
-//    return d.year;
-//})
-//
-//yearMin = timeExtent[0];
-//yearMax = timeExtent[1];
-//
-//yScale.domain([yMin, yMax]);
-//yScale.range([height, 0])
-//yScale.nice();
-//
-//var padding = 2;
-//var barWidth = availableWidth / maxEntriesPerYear - padding;
-//
-//var filteredData = _.filter(data, function (d){
-//    return d.year == yearMin;
-//});
-//
-//filteredData.sort(function (a,b){
-//    return b.value - a.value;
-//});
-//yAxis
-//    //.tickSize(-availableWidth)
-//    .ticks(4)
-//    //.tickFormat(function(d) {
-//    //    return logFormat(d)
-//    //})
-//    .tickPadding(15);
-//
-//    yAxisContainer.transition().duration(500)
-//    .call(yAxis);
-//
-//
-//var bars =  barContainer.selectAll('.bar')
-//    .data(filteredData, function (d){
-//        return d.id;
-//    })
-//
-//bars.enter()
-//    .append('rect')
-//
-//bars.transition().duration(50)
-//    .attr({
-//        height: function (d) {
-//            return height - yScale(d.value);
-//        },
-//        y: function (d) {
-//            return yScale(d.value);
-//        },
-//
-//        width: function (d) {
-//            return barWidth;
-//        },
-//
-//        x: function (d, i) {
-//            return i * barWidth + i * padding;
-//        }
-//    })
-//
-//
-//bars.exit().remove();
+var margin = {
+    top: 10,
+    right: 60,
+    bottom: 30,
+    left: 60
+};
+var svg = d3.select('#chartHolder svg');
+var g = svg.append('g')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+var yScale = d3.scale.linear();
+
+var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("left");
+    
+var yAxisContainer = g.append("g")
+    .attr("class", "axis");
+
+var barContainer = g.append('g')
+    .attr('class', 'barContainer');
+    
+//var availableWidth = (d3.select('#chartHolder').node().offsetWidth) - margin.left - margin.right;
+var availableWidth = 1000;
+var height = 400;
+var maxEntriesPerYear = d3.max(_.values(_.countBy(data, function(d) {
+    return d.year;
+})));
+
+var yMin = 0;
+var yMax = d3.max(data, function (d){
+    return parseFloat(d.value);
+})
+console.log(yMax)
+
+var timeExtent = d3.extent(data,function (d){
+    return d.year;
+})
+
+yearMin = timeExtent[0];
+yearMax = timeExtent[1];
+
+yScale.domain([yMin, yMax]);
+yScale.range([height, 0])
+yScale.nice();
+
+var padding = 2;
+var barWidth = availableWidth / maxEntriesPerYear - padding;
+
+var filteredData = _.filter(data, function (d){
+    return d.year == yearMin;
+});
+
+filteredData.sort(function (a,b){
+    return b.value - a.value;
+});
+yAxis
+    //.tickSize(-availableWidth)
+    .ticks(4)
+    //.tickFormat(function(d) {
+    //    return logFormat(d)
+    //})
+    .tickPadding(15);
+
+    yAxisContainer.transition().duration(500)
+    .call(yAxis);
+
+
+var bars =  barContainer.selectAll('.bar')
+    .data(filteredData, function (d){
+        return d.id;
+    })
+
+bars.enter()
+    .append('rect')
+
+bars.transition().duration(50)
+    .attr({
+        height: function (d) {
+            return height - yScale(d.value);
+        },
+        y: function (d) {
+            return yScale(d.value);
+        },
+
+        width: function (d) {
+            return barWidth;
+        },
+
+        x: function (d, i) {
+            return i * barWidth + i * padding;
+        }
+    })
+
+
+bars.exit().remove();
 </script>
 {% endblock %}
