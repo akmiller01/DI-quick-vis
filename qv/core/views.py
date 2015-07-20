@@ -41,7 +41,7 @@ def data(request,slug):
     ydata = [row['value'] for row in dataDict if (row['year']==maxYear and row['value']!="")]
     extra_serie1 = {"tooltip": {"y_start": "", "y_end": " cal"}}
     chartdata = {
-        'x': xdata, 'name1': '', 'y1': ydata, 'extra1': extra_serie1,
+        'x': xdata, 'name1': '', 'y1': ydata, 'extra1': extra_serie1
     }
     charttype = "discreteBarChart"
     chartcontainer = 'barchart_container'
