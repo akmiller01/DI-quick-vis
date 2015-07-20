@@ -304,7 +304,7 @@ function bar(conf){
         
         bars.enter()
             .append('rect')
-            .on("mouseover", function(d, i) {return show_details(
+            .on("mousemove", function(d, i) {return show_details(
                 conf.xVar + ": " + d[conf.xVar]
                 + "<br/>"
                 + conf.yVar + ": " + d[conf.yVar]
@@ -337,4 +337,98 @@ function bar(conf){
     };
     
     drawBars(filteredData);
+};
+
+function defaultValues(data, dim1, dim2, valueDim, defaultVal) {
+    var uniDim1 = _.uniq(data,function(d){return d[dim1]}),
+    uniDim2 = _.uniq(data,function(d){return d[dim2]});
+    for(key1 in uniDim1){
+        for(key2 in uniDim2){
+            var match = _.find(data,function(d){
+                return d[dim1] == uniDim1[key1][dim1] && d[dim2] == uniDim2[key2][dim2];     
+            });
+            if (typeof(match)=="undefined") {
+                var obj = {};
+                obj[dim1] = uniDim1[key1][dim1];
+                obj[dim2] = uniDim2[key2][dim2];
+                obj[valueDim] = defaultVal;
+                obj['defaultVal'] = true;
+                data.push(obj);
+            }
+        };
+    };
+};
+
+function area(conf){
+    var data = _.filter(conf.data, function (d){
+                    return typeof(d[conf.yVar])=="number";
+                });
+    defaultValues(data, conf.xVar, conf.timeVar, conf.yVar, 0);
+    data.sort(function (a,b){
+                return b[conf.timeVar] - a[conf.timeVar];
+            });
+    var margin = {top: 20, right: 30, bottom: 30, left: 40};
+    var svgParent = d3.select(conf.selector).append('svg');
+    svgParent.attr('viewBox','0 0 800 400');
+    var svg = svgParent.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        
+    width = 800 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+    
+    var x = d3.scale.linear()
+        .range([0, width]);
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
+        
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .tickFormat(function(d){return d})
+        .orient("bottom");
+    
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .tickFormat(function(d){return abbrNum(d,2)})
+        .orient("left");
+
+    var stack = d3.layout.stack()
+        .offset("zero")
+        .values(function(d) { return d.values; })
+        .x(function(d) { return d[conf.timeVar]; })
+        .y(function(d) { return d[conf.yVar]; });
+        
+    var nest = d3.nest()
+        .key(function(d) { return d[conf.xVar]; });
+        
+    var area = d3.svg.area()
+        .interpolate("linear")
+        .x(function(d) { return x(d[conf.timeVar]); })
+        .y0(function(d) { return y(d.y0); })
+        .y1(function(d) { return y(d.y0 + d.y); });
+
+    var layers = stack(nest.entries(data));
+    
+    x.domain(d3.extent(data, function(d) { return d[conf.timeVar]; }));
+    y.domain([0, d3.max(data, function(d) { return d.y0 + d.y; })]);
+    
+    svg.selectAll(".layer")
+        .data(layers)
+      .enter().append("path")
+        .attr("class", "layer")
+        .attr("d", function(d) { return area(d.values); })
+        .style("fill", function(d, i) { return longColor(i); })
+        .on("mousemove", function(d, i) {return show_details(
+                conf.xVar + ": " + d.key
+                , i, this)})
+        .on("mouseout", function(d, i) {return hide_details(d.key, i, this);});
+        
+    svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+  
+    svg.append("g")
+        .attr("class", "axis")
+        .call(yAxis);
 };

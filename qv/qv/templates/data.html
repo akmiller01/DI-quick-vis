@@ -4,14 +4,14 @@
 
 {% block head %}
 <style>
-    #dataHolder{
+    .dataHolder{
         float:left;
         height:500px;
         overflow:scroll;
         margin-left:10px;
         margin-right:10px;
         }
-    #chartHolder{
+    .chartHolder{
         float:left;
         overflow:scroll;
         margin-left:10px;
@@ -19,10 +19,10 @@
         min-width:300px;
         min-height:200px;
     }
-    #dataHolder table{
+    .dataHolder table{
         width:100%;
     }
-    #dataHolder table tr:nth-child(even){
+    .dataHolder table tr:nth-child(even){
         background-color: #CCC;
     }
     .ui-resizable{float:left;}
@@ -51,8 +51,9 @@
 {% block content %}
 <h1>{{dataset.name}}</h1>
 <p>{{dataset.data|length|add:"-1"}} rows {% if dataset.data|length|add:"-1" > 1000 %}, showing first 1000{% endif %}</p>
-<div id="dataHolder" class="ui-widget-content resizable"></div>
-<div id="chartHolder" class="ui-widget-content resizable"></div>
+<div id="table" class="dataHolder ui-widget-content resizable"></div>
+<div id="bar" class="chartHolder ui-widget-content resizable"></div>
+<div id="area" class="chartHolder ui-widget-content resizable"></div>
 <script>
 //Make divs resizable
 $(".resizable")
@@ -73,14 +74,20 @@ $(".resizable")
                             height:'100%'});
 //Import data from Django
 var data = {{dataset.data|safe}};
-table({'selector':'#dataHolder'
+table({'selector':'.dataHolder#table'
       ,'data':data})
-bar({'selector':'#chartHolder'
+bar({'selector':'.chartHolder#bar'
     ,'data':data
     ,'yVar':'value'
     ,'xVar':'id'
     ,'timeVar':'year'
     ,'xUnique':true
     })
+area({'selector':'.chartHolder#area'
+     ,'data':data
+    ,'yVar':'value'
+    ,'xVar':'id'
+    ,'timeVar':'year'
+     })
 </script>
 {% endblock %}
