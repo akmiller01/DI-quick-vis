@@ -50,6 +50,21 @@
 
 {% block content %}
 <h1>{{dataset.name}}</h1>
+<form enctype="multipart/form-data" action="{{dataset.get_absolute_url}}" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="fieldWrapper">
+        {{ field.errors }}
+        {{ field.label_tag }} {{ field }}
+        {% if field.help_text %}
+            <i class="helpText">({{ field.help_text }})</i>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <div class="submit">
+        <input type="submit" value="Update" />
+    </div>
+</form>
 <p>{{dataset.data|length|add:"-1"}} rows {% if dataset.data|length|add:"-1" > 1000 %}, showing first 1000{% endif %}</p>
 <div id="table" class="dataHolder ui-widget-content resizable"></div>
 <div id="bar" class="chartHolder ui-widget-content resizable"></div>
@@ -77,6 +92,27 @@ var data = {{dataset.data|safe}};
 var xVar = "{{dataset.xVar|safe}}";
 var yVar = "{{dataset.yVar|safe}}";
 var timeVar = "{{dataset.timeVar|safe}}";
+var conf = {};
+conf.xVar = xVar;
+conf.yVar = yVar;
+conf.timeVar = timeVar;
+var headers = Object.keys(data[0]);
+var dropdowns = ["xVar","yVar","timeVar"];
+for(var i = 0; i < dropdowns.length; i++){
+    var $dropdown = $("select#id_"+dropdowns[i]);
+    for(var j = 0; j < headers.length; j++){
+        var header = headers[j];
+        var selected = header==conf[dropdowns[i]];
+        var option = "<option value='"
+        option += header
+        option += "' "
+        option += selected ? "selected='selected' ":""
+        option += ">"
+        option += header
+        option += "</option>"
+        $dropdown.append(option)
+    };
+    };
 table({'selector':'.dataHolder#table'
       ,'data':data
       ,'xVar': xVar
