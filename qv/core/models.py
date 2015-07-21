@@ -11,6 +11,11 @@ class Dataset(models.Model):
     slug = models.SlugField(unique=True,max_length=255, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     file_field = models.FileField(upload_to=settings.MEDIA_ROOT+'/%Y/%m/%d')
+    sheet = models.IntegerField(null=True,blank=True)
+    starting_row = models.IntegerField(null=True,blank=True)
+    xVar = models.CharField(max_length=255, null=True, blank=True, default='id')
+    yVar = models.CharField(max_length=255, null=True, blank=True, default='value')
+    timeVar = models.CharField(max_length=255, null=True, blank=True, default='year')
     
     class Meta:
         ordering = ['-created']

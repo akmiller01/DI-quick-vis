@@ -8,3 +8,9 @@ def num(s):
             return float(s)
         except:
             return s
+
+def notNone(s):
+    if s is None or s == "None":
+        return ""
+    else:
+        return s

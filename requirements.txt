@@ -6,9 +6,11 @@ django-compressor==1.5
 django-toolbelt==0.0.1
 django-wysiwyg-redactor==0.4.8.1
 gunicorn==19.3.0
+jdcal==1.0
 Jinja2==2.7.3
 MarkupSafe==0.23
 oauthlib==0.7.2
+openpyxl==2.2.5
 Pillow==2.8.2
 psycopg2==2.6.1
 python-slugify==0.0.9

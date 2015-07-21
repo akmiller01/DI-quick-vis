@@ -8,6 +8,20 @@
         .submit {padding:10px;}
         .helpText{color:#777;}
         ul.errorlist{list-style: none;color:red;padding:0px;}
+        <style>
+    .dataHolder{
+        float:left;
+        height:500px;
+        overflow:scroll;
+        margin-left:10px;
+        margin-right:10px;
+        }
+    .dataHolder table{
+        width:100%;
+    }
+    .dataHolder table tr:nth-child(even){
+        background-color: #CCC;
+    }
     </style>
 {% endblock%}
 
@@ -29,24 +43,26 @@
     </form>
     {% for dataset in datasets %}
         {% if forloop.first %}
+        <div class="dataHolder">
             <table>
                 <tr>
                     <th>Dataset</th>
                     <th>Created</th>
-                    <th>Headers</th>
+                    <th>Headers/Sheets</th>
                 </tr>
         {% endif %}
         <tr>
             <td><a href="{{dataset.get_absolute_url}}">{{dataset.name}}</a></td>
             <td>
                 <time datetime="{{dataset.created|date:"c"}}">
-                    {{dataset.created|date:"Y/m/d @ f a"}}
+                    {{dataset.created|date:"d/m/Y"}} at {{dataset.created|date:"f A"}}
                 </time>
             </td>
             <td>{{dataset.data}}</td>
         </tr>
         {%if forloop.last%}
             </table>
+        </div>
         {% endif %}
     {% endfor %}
 {% endblock %}

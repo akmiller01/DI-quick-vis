@@ -74,23 +74,25 @@ $(".resizable")
                             height:'100%'});
 //Import data from Django
 var data = {{dataset.data|safe}};
+var xVar = "{{dataset.xVar|safe}}";
+var yVar = "{{dataset.yVar|safe}}";
+var timeVar = "{{dataset.timeVar|safe}}";
 table({'selector':'.dataHolder#table'
       ,'data':data
-      ,'xVar':'id'
-      ,'timeVar':'year'
+      ,'xVar': xVar
+      ,'timeVar':timeVar
       })
 bar({'selector':'.chartHolder#bar'
     ,'data':data
-    ,'yVar':'value'
-    ,'xVar':'id'
-    ,'timeVar':'year'
-    ,'xUnique':true
+    ,'yVar':yVar
+    ,'xVar':xVar
+    ,'timeVar':timeVar
     })
 area({'selector':'.chartHolder#area'
      ,'data':data
-    ,'yVar':'value'
-    ,'xVar':'id'
-    ,'timeVar':'year'
+    ,'yVar':yVar
+    ,'xVar':xVar
+    ,'timeVar':timeVar
      })
 </script>
 {% endblock %}

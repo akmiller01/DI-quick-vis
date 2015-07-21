@@ -194,6 +194,7 @@ function bar(conf){
         if(a[conf.yVar] > b[conf.yVar]) return 1;
         return 0;
     });
+    xUnique = _.uniq(data,function(d){return d[conf.xVar]}).length == data.length;
     //Make chart
     var margin = {
         top: 10,
@@ -319,7 +320,7 @@ function bar(conf){
     function drawBars(data){
         var bars =  barContainer.selectAll('.bar')
             .data(data, function (d, i){
-                return conf.xUnique ? d[conf.xVar] : i;
+                return xUnique ? d[conf.xVar] : i;
             })
         
         bars.enter()
