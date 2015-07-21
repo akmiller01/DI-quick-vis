@@ -75,7 +75,10 @@ $(".resizable")
 //Import data from Django
 var data = {{dataset.data|safe}};
 table({'selector':'.dataHolder#table'
-      ,'data':data})
+      ,'data':data
+      ,'xVar':'id'
+      ,'timeVar':'year'
+      })
 bar({'selector':'.chartHolder#bar'
     ,'data':data
     ,'yVar':'value'

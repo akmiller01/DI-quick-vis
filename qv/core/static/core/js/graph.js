@@ -131,7 +131,22 @@ hide_details = function(data, i, element) {
 
 function table(conf) {
     //Draw table
-    var data = conf.data
+    var data = conf.data;
+    if (typeof(conf.timeVar)!="undefined") {
+        data.sort(function (a,b){
+            if(a[conf.xVar] == b[conf.xVar]){
+                return (a[conf.timeVar] < b[conf.timeVar]) ? -1 : (a[conf.timeVar] > b[conf.timeVar]) ? 1 : 0;
+            }else{
+                return (a[conf.xVar] < b[conf.xVar]) ? -1 : 1;
+            };
+        });
+    }else{
+        data.sort(function (a,b){
+            if(a[conf.xVar] < b[conf.xVar]) return -1;
+            if(a[conf.xVar] > b[conf.xVar]) return 1;
+            return 0;
+        });  
+    };
     $tableDiv = $(conf.selector)
     var dataLen = data.length>1001?1001:data.length;
     var html = "<table>"
@@ -174,6 +189,11 @@ function slider(timeVar){
 
 function bar(conf){
     var data = conf.data;
+    data.sort(function (a,b){
+        if(a[conf.yVar] < b[conf.yVar]) return -1;
+        if(a[conf.yVar] > b[conf.yVar]) return 1;
+        return 0;
+    });
     //Make chart
     var margin = {
         top: 10,
@@ -365,8 +385,10 @@ function area(conf){
                 });
     defaultValues(data, conf.xVar, conf.timeVar, conf.yVar, 0);
     data.sort(function (a,b){
-                return b[conf.timeVar] - a[conf.timeVar];
-            });
+        if(a[conf.timeVar] < b[conf.timeVar]) return -1;
+        if(a[conf.timeVar] > b[conf.timeVar]) return 1;
+        return 0;
+    });
     var margin = {top: 20, right: 30, bottom: 30, left: 40};
     var svgParent = d3.select(conf.selector).append('svg');
     svgParent.attr('viewBox','0 0 800 400');
