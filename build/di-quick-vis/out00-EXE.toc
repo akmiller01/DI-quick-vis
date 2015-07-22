@@ -1,0 +1,9 @@
+('C:\\git\\di-quick-vis\\dist\\di-quick-vis.exe',
+ True,
+ False,
+ None,
+ None,
+ [],
+ None,
+ False,
+ 1437572673L)
