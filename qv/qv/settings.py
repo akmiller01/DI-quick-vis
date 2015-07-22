@@ -38,7 +38,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'core',
     'redactor',
-    'compressor',
     'qv',
 )
 
