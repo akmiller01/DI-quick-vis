@@ -1,0 +1,9 @@
+('/home/alex/git/di-quick-vis/dist/di-quick-vis',
+ True,
+ False,
+ None,
+ None,
+ [],
+ None,
+ False,
+ 1437561059)
